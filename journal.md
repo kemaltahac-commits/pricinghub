@@ -14,3 +14,9 @@ Yarın ne: scrape_one.py'yi DB'ye bağla — Product'ı URL'den bul/oluştur, Pr
 
 - Trendyol'da fiyat widget'ları karışık: .original/.discounted = "son 10 günün en düşük fiyatı", .new-price/.old-price = benzer ürün karuseli. Ürün fiyatı sadece data-testid="current-price".
 - data-testid="current-price" iki kez geçebiliyor (biri price-current-price-with-lowest-duration). .first ile ilkini al.
+
+## 2026-10-28
+
+Ne yaptım: scrape_one.py DB'ye bağlandı. Playwright -> parse_price -> Product (URL'den bul/oluştur) -> PriceHistory. İki kez çalıştırdım: 1) YENI URUN id=2 / row id=3, 2) MEVCUT URUN id=2 / row id=4. Duplicate ürün yok, geçmiş birikiyor. Commit: 73510e6.
+Ne takıldım: python scripts\scrape_one.py ModuleNotFoundError veriyor, doğrusu python -m scripts.scrape_one. URL'deki query string (?boutiqueId=...) her istekte değişebildiği için normalize_url ile kesildi. git commit -m yazmayınca Vim açıldı, :wq ile çıktım.
+Yarın ne: hata yolları — ürün/fiyat yok, parse hatası, timeout. Her biri için net print + exit code, sessiz except yok. Kodu bu sefer ben yazacağım.
