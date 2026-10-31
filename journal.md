@@ -20,3 +20,15 @@ Yarın ne: scrape_one.py'yi DB'ye bağla — Product'ı URL'den bul/oluştur, Pr
 Ne yaptım: scrape_one.py DB'ye bağlandı. Playwright -> parse_price -> Product (URL'den bul/oluştur) -> PriceHistory. İki kez çalıştırdım: 1) YENI URUN id=2 / row id=3, 2) MEVCUT URUN id=2 / row id=4. Duplicate ürün yok, geçmiş birikiyor. Commit: 73510e6.
 Ne takıldım: python scripts\scrape_one.py ModuleNotFoundError veriyor, doğrusu python -m scripts.scrape_one. URL'deki query string (?boutiqueId=...) her istekte değişebildiği için normalize_url ile kesildi. git commit -m yazmayınca Vim açıldı, :wq ile çıktım.
 Yarın ne: hata yolları — ürün/fiyat yok, parse hatası, timeout. Her biri için net print + exit code, sessiz except yok. Kodu bu sefer ben yazacağım.
+
+## 2026-10-30 (gun 9)
+
+Ne yaptım: parse_price fonksiyona çevrildi (isdigit filtresi + boş girdide ValueError). fetch try/except/finally ile sarıldı — PlaywrightError -> ScrapeError, browser.close() her durumda çalışıyor. main -> int oldu, hata anında DB'ye hiç dokunmadan return 1. Üç senaryo doğrulandı: olmayan ürün, kategori sayfası, timeout.
+Ne takıldım: URL satırını yanlışlıkla page.goto ile ezdim; ScrapeError sınıfı yoktu. İkisi de 2 dakikalık hata ama 20 dakika yedi.
+Yarın ne: scrape_all — birden fazla URL döngüde, her biri için ayrı hata yakalama, tek ürün çökerse diğerleri devam etsin.
+
+## 2026-11-01 (gun 11)
+
+Ne yaptım: scripts/scrape_all.py yazıldı — URLS listesi üzerinde döngü, her URL için ayrı try/except ScrapeError, biri çökerse continue ile devam. Çıktı: 1 basarili, 1 basarisiz, script çökmedi. Çoklu URL + ürün bazlı hata yakalama çalışıyor.
+Ne takıldım: -m scripts.scrape_all çalıştırırken dosya adı karışıklığı yaşadım (kısa süreli). Ayrica URLS listesinde test URL'i (kategori sayfası) kaldı, her çalıştırmada yapay "1 basarisiz" üretiyor. scrape_all'ın DB'ye yazdığı çıktıda görünmüyor, doğrulanmadı.
+Yarın ne: URLS'e 2-3 gerçek ürün linki koy, test URL'ini çıkar, hepsi BASARILI olmalı. Sonra Docker + README (v0.1).

@@ -1,18 +1,24 @@
 from urllib.parse import urlsplit
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Error as PlaywrightError, sync_playwright
 
 from app.db import SessionLocal
 from app.models import Product, PriceHistory
 
-URL = "https://www.trendyol.com/xiaomi/redmi-a7-pro-4gb-128gb-siyah-xiaomi-turkiye-garantili-p-1175413438?boutiqueId=689770&merchantId=968"
+URL = "https://www.trendyol.com/xiaomi/olmayan-urun-p-999999999"
 SOURCE = "trendyol"
 
 
+class ScrapeError(Exception):
+    """Beklenen scraper hatalari. Beklenmeyenlerden ayri tutulur."""
+    pass
+
+
 def parse_price(text: str) -> float:
-    cleaned = text.replace("TL", "").replace("₺", "").strip()
-    cleaned = cleaned.replace(".", "").replace(",", ".")
-    return float(cleaned)
+    cleaned = "".join(ch for ch in text if ch.isdigit() or ch in ".,")
+    if not cleaned:
+        raise ValueError(f"fiyat bulunamadi: {text!r}")
+    return float(cleaned.replace(".", "").replace(",", "."))
 
 
 def normalize_url(url: str) -> str:
@@ -23,20 +29,28 @@ def normalize_url(url: str) -> str:
 def fetch(url: str) -> tuple[str, str]:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
-        page = browser.new_page(locale="tr-TR")
-        page.goto(url, wait_until="domcontentloaded", timeout=45000)
-        page.wait_for_selector('[data-testid="current-price"]', timeout=20000)
+        try:
+            page = browser.new_page(locale="tr-TR")
+            page.goto(url, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_selector('[data-testid="current-price"]', timeout=20000)
 
-        title = page.title().replace(" - Fiyatı", "").strip()
-        raw = page.locator('[data-testid="current-price"]').first.inner_text().strip()
+            title = page.title().replace(" - Fiyatı", "").strip()
+            raw = page.locator('[data-testid="current-price"]').first.inner_text().strip()
+            return title, raw
+        except PlaywrightError as e:
+            raise ScrapeError(f"sayfa alinamadi: {url}") from e
+        finally:
+            browser.close()
 
-        browser.close()
-    return title, raw
 
+def main() -> int:
+    try:
+        title, raw = fetch(URL)
+        price = parse_price(raw)
+    except (ScrapeError, ValueError) as e:
+        print(f"HATA: {e}")
+        return 1
 
-def main():
-    title, raw = fetch(URL)
-    price = parse_price(raw)
     url = normalize_url(URL)
 
     print(f"TITLE: {title}")
@@ -63,6 +77,8 @@ def main():
             f"price={row.price} currency={row.currency} scraped_at={row.scraped_at}"
         )
 
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
