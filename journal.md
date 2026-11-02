@@ -27,8 +27,15 @@ Ne yaptım: parse_price fonksiyona çevrildi (isdigit filtresi + boş girdide Va
 Ne takıldım: URL satırını yanlışlıkla page.goto ile ezdim; ScrapeError sınıfı yoktu. İkisi de 2 dakikalık hata ama 20 dakika yedi.
 Yarın ne: scrape_all — birden fazla URL döngüde, her biri için ayrı hata yakalama, tek ürün çökerse diğerleri devam etsin.
 
-## 2026-11-01 (gun 11)
 
+## 2026-10-31 (gun 10)
 Ne yaptım: scripts/scrape_all.py yazıldı — URLS listesi üzerinde döngü, her URL için ayrı try/except ScrapeError, biri çökerse continue ile devam. Çıktı: 1 basarili, 1 basarisiz, script çökmedi. Çoklu URL + ürün bazlı hata yakalama çalışıyor.
 Ne takıldım: -m scripts.scrape_all çalıştırırken dosya adı karışıklığı yaşadım (kısa süreli). Ayrica URLS listesinde test URL'i (kategori sayfası) kaldı, her çalıştırmada yapay "1 basarisiz" üretiyor. scrape_all'ın DB'ye yazdığı çıktıda görünmüyor, doğrulanmadı.
 Yarın ne: URLS'e 2-3 gerçek ürün linki koy, test URL'ini çıkar, hepsi BASARILI olmalı. Sonra Docker + README (v0.1).
+
+## 2026-11-02 (gun 12)
+scripts/scrape_all.py güncellenerek gerçek çoklu URL'ler eklendi.
+
+Çoklu ürün döngüsü ve hata yönetimi ile test edildi (2 başarılı, 1 başarısız).
+
+git commit yapıldı.

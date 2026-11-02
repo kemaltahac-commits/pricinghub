@@ -4,7 +4,8 @@ from app.models import Product, PriceHistory
 
 URLS = [
     "https://www.trendyol.com/xiaomi/redmi-a7-pro-4gb-128gb-siyah-xiaomi-turkiye-garantili-p-1175413438",
-    "https://www.trendyol.com/cep-telefonu-x-c103498",
+    "https://www.trendyol.com/xiaomi/redmi-13c-8-gb-ram-256-gb-lacivert-cep-telefonu-xiaomi-turkiye-garantili-p-789833302",
+    "https://www.trendyol.com/samsung/galaxy-s26fe-8-256-gb-grafit-gri-cep-telefonu-p-1197229486?boutiqueId=689770&merchantId=968"
 ]
 
 basarili = 0
