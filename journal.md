@@ -39,3 +39,29 @@ scripts/scrape_all.py güncellenerek gerçek çoklu URL'ler eklendi.
 Çoklu ürün döngüsü ve hata yönetimi ile test edildi (2 başarılı, 1 başarısız).
 
 git commit yapıldı.
+Bugün `pricinghub` projesinde Docker entegrasyonunu eksiksiz bir şekilde tamamladık. Sırasıyla şu adımları gerçekleştirdik:
+
+### 2026-11-03 (gun 13)
+
+### 1. Sistem & Sanallaştırma Altyapısı
+
+* **Docker Desktop Kurulumu:** Windows installer üzerinden kurulumu başlattık.
+* **Virtual Machine Platform:** Eksik olan sanallaştırma özelliğini PowerShell (`dism.exe`) komutuyla aktifleştirip bilgisayarı yeniden başlattık.
+* **WSL 2 Ayarı:** `wsl --install` komutuyla Linux alt sistemini kurduk ve Docker Engine'i çalışır (`Engine running`) duruma getirdik.
+
+---
+
+### 2. Dockerfile & Bağımlılık Onarımları
+
+* **Playwright Bağımlılığı:** `requirements.txt` dosyasına eksik olan `playwright` paketini ekledik.
+* **Dockerfile Güncellemesi:** Komut hatasını çözmek için bağımlılık yüklemesini `python -m playwright install --with-deps chromium` şeklinde yapılandırdık.
+
+---
+
+### 3. İmaj Derleme (Build)
+
+* **Image Generation:** `docker build -t pricinghub .` komutuyla Chromium ve Python ortamı dahil tüm katmanları hatasız bir şekilde derledik ve `pricinghub:latest` imajını oluşturduk.
+
+---
+
+> **Son Durum:** Projenin tüm Docker altyapısı ve bağımlılıkları problemsiz bir şekilde yayına hazır hale getirildi.
