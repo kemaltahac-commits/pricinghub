@@ -65,3 +65,24 @@ Bugün `pricinghub` projesinde Docker entegrasyonunu eksiksiz bir şekilde tamam
 ---
 
 > **Son Durum:** Projenin tüm Docker altyapısı ve bağımlılıkları problemsiz bir şekilde yayına hazır hale getirildi.
+
+### 2026-11-05 (gün 15)
+ Docker Compose Yapılandırması ve Syntax Düzeltmesi:
+
+pricinghub projesi için docker-compose.yml dosyası oluşturuldu.
+
+Dosyadaki volummes: yazım hatası ve YAML girinti/mapping hatası giderildi; servis bağıntıları doğru hizalamayla standart hale getirildi.
+
+Container Ayağa Kaldırma ve Sağlık Kontrolü:
+
+docker compose up -d --build komutu çalıştırılarak pricinghub-app-1 container'ı hatasız şekilde derlendi ve başlatıldı.
+
+Invoke-WebRequest ile http://localhost:8000/docs endpoint'ine istek atıldı; 200 OK yanıtı ve Uvicorn sunucu doğrulaması alındı.
+
+SQLite Volume Kalıcılık (Persistence) Testi:
+
+Yerel ./data dizini container içerisindeki /app/data dizinine volume olarak bağlandı.
+
+docker compose down komutuyla container tamamen kaldırıldı.
+
+docker compose up -d komutuyla tekrar ayağa kaldırıldığında veritabanı dosyasının ve verilerin silinmeyip kalıcı olarak korunduğu (volume persistence) doğrulandı.
