@@ -13,7 +13,7 @@ PricingHub is a robust, containerized web scraping and data pipeline backend bui
 * **Backend:** FastAPI (Python 3.11)
 * **Web Scraping & Automation:** Playwright (Chromium)
 * **Database & ORM:** SQLite & SQLAlchemy
-* **Data Processing:** Pandas
+* **Data Processing:** Python standard library
 * **Containerization:** Docker & Docker Compose (with volume persistence)
 
 ## ⚙️ How to Run
