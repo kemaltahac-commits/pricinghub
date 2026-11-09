@@ -1,6 +1,8 @@
+from datetime import timedelta
+from datetime import timedelta
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
-
+from sqlalchemy import func
 from app.db import Base, engine, get_db
 from app.models import Product, PriceHistory
 from app.schemas import (
@@ -8,6 +10,7 @@ from app.schemas import (
     ProductRead,
     PriceHistoryCreate,
     PriceHistoryRead,
+    PriceStats,
 )
 
 app = FastAPI(title="PricingHub")
@@ -68,4 +71,50 @@ def list_prices(product_id: int, db: Session = Depends(get_db)):
         .filter(PriceHistory.product_id == product_id)
         .order_by(PriceHistory.scraped_at.desc(), PriceHistory.id.desc())
         .all()
+    )
+@app.get("/products/{product_id}/stats", response_model=PriceStats)
+def product_stats(product_id: int, db: Session = Depends(get_db)):
+    if db.get(Product, product_id) is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    records, min_p, max_p, avg_p = (
+        db.query(
+            func.count(PriceHistory.id),
+            func.min(PriceHistory.price),
+            func.max(PriceHistory.price),
+            func.avg(PriceHistory.price),
+        )
+        .filter(PriceHistory.product_id == product_id)
+        .one()
+    )
+
+    latest = (
+        db.query(PriceHistory)
+        .filter(PriceHistory.product_id == product_id)
+        .order_by(PriceHistory.scraped_at.desc(), PriceHistory.id.desc())
+        .first()
+    )
+
+    change_30d_pct = None
+    if latest:
+        old = (
+            db.query(PriceHistory)
+            .filter(
+                PriceHistory.product_id == product_id,
+                PriceHistory.scraped_at <= latest.scraped_at - timedelta(days=30),
+            )
+            .order_by(PriceHistory.scraped_at.desc(), PriceHistory.id.desc())
+            .first()
+        )
+        if old:
+            change_30d_pct = ((latest.price - old.price) / old.price) * 100
+
+    return PriceStats(
+        product_id=product_id,
+        records=records,
+        min_price=min_p,
+        max_price=max_p,
+        avg_price=avg_p,
+        latest_price=latest.price if latest else 0.0,
+        change_30d_pct=change_30d_pct,
     )

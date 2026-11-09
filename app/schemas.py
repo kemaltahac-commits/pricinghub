@@ -31,3 +31,12 @@ class PriceHistoryRead(BaseModel):
     price: float
     currency: str
     scraped_at: datetime
+
+class PriceStats(BaseModel):
+    product_id : int
+    records : int 
+    min_price : float
+    max_price: float 
+    avg_price: float 
+    latest_price: float 
+    change_30d_pct: float |  None 

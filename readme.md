@@ -5,7 +5,7 @@ PricingHub is a robust, containerized web scraping and data pipeline backend bui
 ## 📊 Project Metrics
 
 * **Total Products Tracked:** 3
-* **Total Price Records:** 10
+* **Total Price Records:** 7
 * **Average Scrape Duration:** ~3.5s per run
 
 ## 🏗️ Architecture & Tech Stack
