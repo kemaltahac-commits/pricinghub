@@ -2,9 +2,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_url: str = "sqlite:///./pricinghub.db"
+   database_url: str = "sqlite:////app/data/pricinghub.db"
 
-    class Config:
+class Config:
         env_file = ".env"
 
 
